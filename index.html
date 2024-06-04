@@ -19,34 +19,43 @@
       const checkoutButton = document.getElementById('checkout-button');
 
       checkoutButton.addEventListener('click', async () => {
-        const response = await fetch(`${url}/get-api-key`, {
-          method: 'GET',
-        });
+        try {
+          const response = await fetch(`${url}/get-api-key`, { method: 'GET' });
 
-        if (!response.ok) {
-          console.error('Failed to get API key');
-          return;
-        }
+          if (!response.ok) {
+            console.error('Failed to get API key');
+            return;
+          }
 
-        const { apiKey } = await response.json();
+          const { apiKey } = await response.json();
 
-        fetch(`${url}/create-checkout-session`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${apiKey}`,
-          },
-        })
-          .then(response => response.json())
-          .then(session => stripe.redirectToCheckout({ sessionId: session.id }))
-          .then(result => {
-            if (result.error) {
-              alert(result.error.message);
+          const sessionResponse = await fetch(
+            `${url}/create-checkout-session`,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${apiKey}`,
+              },
             }
-          })
-          .catch(error => {
-            console.error('Error:', error);
-          });
+          );
+
+          const session = await sessionResponse.json();
+
+          if (sessionResponse.ok) {
+            stripe
+              .redirectToCheckout({ sessionId: session.id })
+              .then(result => {
+                if (result.error) {
+                  alert(result.error.message);
+                }
+              });
+          } else {
+            console.error('Error creating checkout session:', session);
+          }
+        } catch (error) {
+          console.error('Error:', error);
+        }
       });
     </script>
   </body>
