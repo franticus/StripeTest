@@ -13,15 +13,24 @@
     <script type="text/javascript">
       const stripe = Stripe(
         'pk_test_51PNcn6RrQfUQC5MYaOchK1YrrDtBrxRDbyzQ2rfUIw7QhiIPmOU0vLYBq17pyMSQKAw99bqVnmeYGELIq2KOncST00ysRkRCO0'
-      ); // Замените на ваш тестовый публичный ключ
+      );
+
+      const getApiKey = async () => {
+        const response = await fetch('/get-api-key');
+        const data = await response.json();
+        return data.apiKey;
+      };
 
       const checkoutButton = document.getElementById('checkout-button');
 
-      checkoutButton.addEventListener('click', () => {
+      checkoutButton.addEventListener('click', async () => {
+        const apiKey = await getApiKey();
+
         fetch('https://stripeiq-frantunn.amvera.io/create-checkout-session', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `Bearer ${apiKey}`,
           },
         })
           .then(response => response.json())
