@@ -35,7 +35,7 @@
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${apiKey}`,
+                Authorization: `Bearer ${encodeURIComponent(apiKey)}`, // Используем encodeURIComponent для безопасной передачи данных
               },
             }
           );
