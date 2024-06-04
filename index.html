@@ -15,53 +15,38 @@
       const stripe = Stripe(
         'pk_test_51PNcn6RrQfUQC5MYaOchK1YrrDtBrxRDbyzQ2rfUIw7QhiIPmOU0vLYBq17pyMSQKAw99bqVnmeYGELIq2KOncST00ysRkRCO0'
       );
-      const existingApiKey = 'your_existing_api_key_for_key_request'; // Предположим, что у вас есть начальный API ключ для запроса ключа
-
-      const getApiKey = async () => {
-        const response = await fetch(`${url}/get-api-key`, {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${existingApiKey}`,
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to get API key');
-        }
-
-        const data = await response.json();
-        return data.apiKey;
-      };
 
       const checkoutButton = document.getElementById('checkout-button');
 
       checkoutButton.addEventListener('click', async () => {
-        try {
-          const apiKey = await getApiKey();
+        const response = await fetch(`${url}/get-api-key`, {
+          method: 'GET',
+        });
 
-          const sessionResponse = await fetch(
-            `${url}/create-checkout-session`,
-            {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${apiKey}`,
-              },
-            }
-          );
-
-          const session = await sessionResponse.json();
-
-          const result = await stripe.redirectToCheckout({
-            sessionId: session.id,
-          });
-
-          if (result.error) {
-            alert(result.error.message);
-          }
-        } catch (error) {
-          console.error('Error:', error);
+        if (!response.ok) {
+          console.error('Failed to get API key');
+          return;
         }
+
+        const { apiKey } = await response.json();
+
+        fetch(`${url}/create-checkout-session`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${apiKey}`,
+          },
+        })
+          .then(response => response.json())
+          .then(session => stripe.redirectToCheckout({ sessionId: session.id }))
+          .then(result => {
+            if (result.error) {
+              alert(result.error.message);
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
       });
     </script>
   </body>
