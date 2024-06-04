@@ -16,18 +16,21 @@
         'pk_test_51PNcn6RrQfUQC5MYaOchK1YrrDtBrxRDbyzQ2rfUIw7QhiIPmOU0vLYBq17pyMSQKAw99bqVnmeYGELIq2KOncST00ysRkRCO0'
       );
 
-      const getApiKey = async () => {
-        const response = await fetch(`${url}/get-api-key`);
-        const data = await response.json();
-        return data.apiKey;
-      };
-
       const checkoutButton = document.getElementById('checkout-button');
 
       checkoutButton.addEventListener('click', async () => {
-        const apiKey = await getApiKey();
+        const response = await fetch('/get-api-key', {
+          method: 'GET',
+        });
 
-        fetch(`${url}/create-checkout-session`, {
+        if (!response.ok) {
+          console.error('Failed to get API key');
+          return;
+        }
+
+        const { apiKey } = await response.json();
+
+        fetch('/create-checkout-session', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -35,9 +38,7 @@
           },
         })
           .then(response => response.json())
-          .then(session => {
-            return stripe.redirectToCheckout({ sessionId: session.id });
-          })
+          .then(session => stripe.redirectToCheckout({ sessionId: session.id }))
           .then(result => {
             if (result.error) {
               alert(result.error.message);
