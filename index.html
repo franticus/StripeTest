@@ -11,12 +11,13 @@
     <button id="checkout-button">Checkout</button>
 
     <script type="text/javascript">
+      const url = 'https://stripeiq-frantunn.amvera.io';
       const stripe = Stripe(
         'pk_test_51PNcn6RrQfUQC5MYaOchK1YrrDtBrxRDbyzQ2rfUIw7QhiIPmOU0vLYBq17pyMSQKAw99bqVnmeYGELIq2KOncST00ysRkRCO0'
       );
 
       const getApiKey = async () => {
-        const response = await fetch('/get-api-key');
+        const response = await fetch(`${url}/get-api-key`);
         const data = await response.json();
         return data.apiKey;
       };
@@ -26,7 +27,7 @@
       checkoutButton.addEventListener('click', async () => {
         const apiKey = await getApiKey();
 
-        fetch('https://stripeiq-frantunn.amvera.io/create-checkout-session', {
+        fetch(`${url}/create-checkout-session`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
