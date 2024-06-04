@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stripe Payment</title>
+    <script src="https://js.stripe.com/v3/"></script>
+  </head>
+  <body>
+    <h1>Pay with Stripe</h1>
+    <button id="checkout-button">Checkout</button>
+
+    <script type="text/javascript">
+      const stripe = Stripe(
+        'pk_test_51PNcn6RrQfUQC5MYaOchK1YrrDtBrxRDbyzQ2rfUIw7QhiIPmOU0vLYBq17pyMSQKAw99bqVnmeYGELIq2KOncST00ysRkRCO0'
+      ); // Замените на ваш тестовый публичный ключ
+
+      const checkoutButton = document.getElementById('checkout-button');
+
+      checkoutButton.addEventListener('click', () => {
+        fetch('http://localhost:4242/create-checkout-session', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+          .then(response => response.json())
+          .then(session => {
+            return stripe.redirectToCheckout({ sessionId: session.id });
+          })
+          .then(result => {
+            if (result.error) {
+              alert(result.error.message);
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
+      });
+    </script>
+  </body>
+</html>
