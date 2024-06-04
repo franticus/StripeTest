@@ -18,7 +18,7 @@
       const checkoutButton = document.getElementById('checkout-button');
 
       checkoutButton.addEventListener('click', () => {
-        fetch('http://localhost:4242/create-checkout-session', {
+        fetch('stripeiq-frantunn.amvera.io/create-checkout-session', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
