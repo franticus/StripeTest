@@ -19,7 +19,7 @@
       const checkoutButton = document.getElementById('checkout-button');
 
       checkoutButton.addEventListener('click', async () => {
-        const response = await fetch('/get-api-key', {
+        const response = await fetch(`${url}/get-api-key`, {
           method: 'GET',
         });
 
@@ -30,7 +30,7 @@
 
         const { apiKey } = await response.json();
 
-        fetch('/create-checkout-session', {
+        fetch(`${url}/create-checkout-session`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
