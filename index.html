@@ -12,7 +12,11 @@
 
     <script type="text/javascript">
       const url = 'https://stripeiq-frantunn.amvera.io';
-      const stripe = Stripe('ваш публичный ключ Stripe');
+      const publicKey =
+        'pk_test_51PNcn6RrQfUQC5MYaOchK1YrrDtBrxRDbyzQ2rfUIw7QhiIPmOU0vLYBq17pyMSQKAw99bqVnmeYGELIq2KOncST00ysRkRCO0';
+      const stripe = Stripe(
+        'pk_test_51PNcn6RrQfUQC5MYaOchK1YrrDtBrxRDbyzQ2rfUIw7QhiIPmOU0vLYBq17pyMSQKAw99bqVnmeYGELIq2KOncST00ysRkRCO0'
+      );
 
       const checkoutButton = document.getElementById('checkout-button');
 
